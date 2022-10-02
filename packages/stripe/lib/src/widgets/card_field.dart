@@ -15,6 +15,7 @@ class CardField extends StatefulWidget {
     this.onCardChanged,
     Key? key,
     this.onFocus,
+    this.onBlur,
     this.decoration,
     this.enablePostalCode = false,
     this.countryCode,
@@ -35,6 +36,9 @@ class CardField extends StatefulWidget {
 
   /// Callback that will be executed when a specific field gets focus.
   final CardFocusCallback? onFocus;
+
+  /// Callback that will be executed when a specific field gets focus.
+  final CardFocusCallback? onBlur;
 
   /// Callback that will be executed when the card information changes.
   final CardChangedCallback? onCardChanged;
@@ -182,6 +186,7 @@ class _CardFieldState extends State<CardField> {
               onCardChanged: widget.onCardChanged,
               autofocus: widget.autofocus,
               onFocus: widget.onFocus,
+              onBlur: widget.onBlur,
             ),
           );
     return InputDecorator(
@@ -256,6 +261,7 @@ class _MethodChannelCardField extends StatefulWidget {
     required this.controller,
     Key? key,
     this.onFocus,
+    this.onBlur,
     this.style,
     this.placeholder,
     this.enablePostalCode = false,
@@ -276,6 +282,7 @@ class _MethodChannelCardField extends StatefulWidget {
 
   final BoxConstraints? constraints;
   final CardFocusCallback? onFocus;
+  final CardFocusCallback? onBlur;
   final CardChangedCallback? onCardChanged;
   final CardStyle? style;
   final CardPlaceholder? placeholder;
@@ -517,8 +524,10 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField>
           ambiguate(WidgetsBinding.instance)?.focusManager.primaryFocus !=
               _effectiveNode) {
         _effectiveNode.requestFocus();
+        widget.onFocus?.call(field.focusedField);
+      } else {
+        widget.onBlur?.call(field.focusedField);
       }
-      widget.onFocus?.call(field.focusedField);
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       dev.log(
